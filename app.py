@@ -1,5 +1,5 @@
 from flask import Flask, g, jsonify,render_template
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 login_manager = LoginManager()
 from flask_cors import CORS
 import models
@@ -23,7 +23,7 @@ def load_user(userid):
 
 CORS(photos_api, origins=["http://localhost:3000"], support_credentials=True)
 CORS(users_api, origins=["http://localhost:3000"], support_credentials=True)
-CORS(app, origins=["http://localhost:3000"], support_credentials=True)
+
 
 app.register_blueprint(photos_api, url_prefix='/photos')
 app.register_blueprint(users_api, url_prefix='/users')
@@ -35,6 +35,7 @@ def before_request():
     """Connect to the database before each request"""
     g.db = models.DATABASE
     g.db.connect()
+    g.user = current_user
 
 @app.after_request
 def after_request(response):
